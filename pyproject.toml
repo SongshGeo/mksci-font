@@ -5,6 +5,7 @@ description = ""
 authors = ["Shuang Song <songshgeo@gmail.com>"]
 readme = "README.md"
 packages = [{include = "mksci_font"}]
+include = ["SunTimes.ttf"]
 
 [tool.poetry.dependencies]
 python = "^3.11"

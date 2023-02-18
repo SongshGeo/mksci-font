@@ -1,0 +1,14 @@
+Open("SimSun.ttf")
+SelectAll()
+ScaleToEm(1024)
+Generate("temp.ttf", "", -1)
+Close()
+
+Open("times.ttf")
+SelectAll()
+ScaleToEm(1024)
+
+MergeFonts("temp.ttf")
+SetFontNames("SunTimes", "SunTimes", "SimSun and Times New Roman Hybrid", "Regular", "")
+Generate("SunTimes.ttf", "", -1)
+Close()
