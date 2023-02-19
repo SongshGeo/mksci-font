@@ -372,9 +372,6 @@ def mksci_font(
         该函数是一个装饰器函数，用于将一个生成 matplotlib.axes 的函数包装成中文，同时覆盖中文的标签标题等。
     """
 
-    if mapping_strings is None:
-        mapping_strings = {}
-
     def decorator(func):
         def wrapper(*args, **kwargs):
             config = get_config()
