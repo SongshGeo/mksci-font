@@ -2,77 +2,91 @@
 mksci-font
 ==========
 
-`mksci-font` is a Python package that makes it easy to convert Matplotlib figures for use with Chinese fonts. It includes several functions that allow you to configure the font settings for your figures, as well as update the text elements of existing figures to use Chinese fonts.
+`mksci-font` 用于方便地将 Matplotlib 支持中文字体允许您配置图形为“中文宋体、英文 Times New Roman”。
 
-Installation
-------------
+## 安装
 
-To install `mksci-font`, you can use pip:
-
-bash
+使用喜欢的包管理工具安装：
 
 ```bash
 pip install mksci-font
 ```
 
-Usage
------
+使用方法
+----
 
-### Setting the default font configuration
+### 配置默认字体设置
 
-To configure the default font settings for Matplotlib, you can use the `config_font()` function. This function takes no arguments, and sets the default font family to "SimSun" for Chinese text and "Times" for English text:
+要为 Matplotlib 配置默认字体设置，可以使用 `config_font()` 函数。
 
 python
 
 ```python
-from mksci_font import config_font
+# 同时还可以修改字号，以及其它任何 rcParams 支持的属性
+config_font({"font.size": 12})
 
-config_font()
+_, ax = plt.subplots(figsize=(4, 1))
+ax.text(0.5, 0.5, msg, ha='center', va='center')
+plt.show();
+
 ```
 
-### Converting a function to use Chinese fonts
+![U73Adi](https://songshgeo-picgo-1302043007.cos.ap-beijing.myqcloud.com/uPic/U73Adi.jpg)
 
-To convert a function that generates a Matplotlib axes to use Chinese fonts, you can use the `@mksci_font` decorator. This decorator wraps your function and applies the configured font settings to the resulting figure:
+### 针对做图函数修改
+
+对于返回`matplotlib.axes`的作图函数，可以简单使用 `@mksci_font` 装饰器，在修改字体的同时，可以将图中元素换成中文。
 
 python
 
 ```python
-from mksci_font import mksci_font
+msg = "让 Matplotlib 图件使用 \n “中文宋体、英文 Times New Roman”"
+mapping_string = {'Origin title': '替换后的标题'}
 
-@mksci_font
-def my_plot():
-    import matplotlib.pyplot as plt
-
-    fig, ax = plt.subplots()
-    ax.plot([1, 2, 3], [4, 5, 6])
-    ax.set_xlabel('X轴')
-    ax.set_ylabel('Y轴')
-    ax.set_title('中文标题')
-
+@mksci_font(mapping_string, ylabel="覆盖原Y轴标签")
+def plot():
+    _, ax = plt.subplots(figsize=(4, 3))
+    ax.text(0.5, 0.6, "mksci-font 中文", ha='center')
+    ax.text(0.5, 0.3, msg, ha='center')
+    ax.set_ylabel("will be replaced...")  # will be replaced by '中文'
+    ax.set_xlabel("中文 & English & $TeX_{mode}$")
+    ax.set_title("Origin title")
     return ax
+
+
+ax = plot()
+show()
 ```
 
-### Updating the text elements of an existing figure
+![WbZq1I](https://songshgeo-picgo-1302043007.cos.ap-beijing.myqcloud.com/uPic/WbZq1I.jpg)
 
-To update the text elements of an existing figure to use Chinese fonts, you can use the `update_elements()` function. This function takes an existing Matplotlib axes object and updates its text elements to use the configured font settings:
+### 更新现有图形的文本元素
 
-python
+可以使用 `update_font()` 函数更新已有图像，使用方法与`@mksci_font`类似：
 
 ```python
-from mksci_font import update_elements
+_, ax = plt.subplots(figsize=(4, 3))
+ax.text(0.5, 0.6, "mksci-font 中文", ha='center')
+ax.text(0.5, 0.3, msg, ha='center')
+ax.set_ylabel("will be replaced...")  # will be replaced by '中文'
+ax.set_xlabel("中文 & English & $TeX_{mode}$")
+ax.set_title("Origin title")
 
-fig, ax = plt.subplots()
-ax.plot([1, 2, 3], [4, 5, 6])
-ax.set_xlabel('X Label')
-ax.set_ylabel('Y Label')
-ax.set_title('Title')
-
-update_elements(ax, xlabel='X轴', ylabel='Y轴', title='中文标题')
+msg = "让 Matplotlib 图件使用 \n “中文宋体、英文 Times New Roman”"
+mapping_string = {'Origin title': '替换后的标题'}
+update_font(ax, mapping_string, ylabel="覆盖原Y轴标签")
 ```
 
-License
--------
+更多用法例子可以见[这个笔记本](tests/test_plot_jupyter.ipynb)
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
+许可证
 ---
+
+本项目基于 MIT 许可证开源。有关详细信息，请参阅 [LICENSE](LICENSE) 文件。
+
+关于作者
+---
+
+[Shuang Song](https://cv.songshgeo.com/), a scientist who also travels.
+
+<a href="https://www.buymeacoffee.com/USgxYspYW4" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>

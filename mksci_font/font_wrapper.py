@@ -16,18 +16,88 @@ FONT_DIRS = pkg_resources.resource_filename("mksci_font", "data")
 FONTS = ("SunTimes",)
 
 
-def is_font_loaded(font_name):
-    # Use findfont to check if the font is loaded
+def is_font_loaded(font_name: str) -> bool:
+    """
+    检查指定字体是否已加载
+
+    Parameters
+    ----------
+    font_name : str
+        字体名称
+
+    Returns
+    -------
+    bool
+        True if the font is loaded, otherwise False.
+
+    Examples
+    --------
+    >>> is_font_loaded('SimSun')
+    True
+
+    >>> is_font_loaded('一个不知名的字体')
+    False
+
+    """
     font_names = [font.name for font in fm.fontManager.ttflist]
     return font_name in font_names
 
 
-def all_fonts_loaded():
+def all_fonts_loaded() -> bool:
+    """
+    Returns a Boolean value indicating whether all fonts defined in FONTS are loaded in the current session.
+
+    Returns
+    -------
+    bool
+        `True` if all fonts defined in FONTS are loaded in the current session, `False` otherwise.
+
+    Examples
+    --------
+    >>> all_fonts_loaded()
+    True
+
+    Notes
+    -----
+    This function checks whether all fonts defined in FONTS are loaded in the current session (necessary to use 中文宋体，英文 Times New Roman). If any fonts are missing,
+    this function will return `False`. Otherwise, it will return `True`.
+    """
     return all(is_font_loaded(font) for font in FONTS)
 
 
 def show(figure=None, *args, **kwargs):
-    """显示图形"""
+    """
+    显示 matplotlib 图形。
+
+    Parameters
+    ----------
+    figure : matplotlib.figure.Figure, optional
+        显示的图形对象。默认值为 `None`，创建新的图形。
+    *args : tuple, optional
+        其他位置参数，将在 `plt.show` 调用时传递。
+    **kwargs : dict, optional
+        其他关键字参数，将在 `plt.show` 调用时传递。
+
+    Returns
+    -------
+    result : None
+        该函数没有返回值。
+
+    Examples
+    --------
+    显示一个新的图形：
+
+    >>> show()
+
+    显示现有的图形：
+
+    >>> fig, ax = plt.subplots()
+    >>> show(fig)
+
+    Notes
+    -----
+    如果指定了 `figure`，则该对象将被设置为当前的 matplotlib 图形对象。
+    """
     if figure is not None:
         plt.figure(figure.number)  # set the given figure as the current figure
     with plt.rc_context(get_config()):
@@ -35,7 +105,35 @@ def show(figure=None, *args, **kwargs):
     return results
 
 
-def get_config(font_name="SunTimes", font_kwargs: dict = None, **kwargs) -> dict:
+def get_config(font_name: str = "SunTimes", font_kwargs: dict = None, **kwargs) -> dict:
+    """
+    返回用于 Matplotlib 图形的字体配置字典。
+
+    Parameters
+    ----------
+    font_name : str, optional
+        衬线字体的名称。默认为 "SunTimes"。
+    font_kwargs : dict, optional
+        包含字体配置选项的字典。默认为 `None`。
+    **kwargs
+        其他字体配置选项。
+
+    Returns
+    -------
+    dict
+        用于 Matplotlib 图形的字体配置字典。
+
+    Raises
+    ------
+    ValueError
+        如果在 `FONT_DIRS` 中未找到字体。
+
+    Notes
+    -----
+    该函数返回用于 Matplotlib 图形的字体配置字典。字体配置包括衬线字体、数学字体、负号处理等。用户可以指定
+    `font_name` 和其他字体配置选项，也可以将它们作为关键字参数传递。默认情况下，衬线字体为 "SunTimes"。
+
+    """
     added = add_fonts()
     if font_kwargs is None:
         font_kwargs = {}
@@ -54,7 +152,25 @@ def get_config(font_name="SunTimes", font_kwargs: dict = None, **kwargs) -> dict
     )
 
 
-def add_fonts():
+def add_fonts() -> bool:
+    """
+    添加指定文件夹下的字体到 matplotlib 的字体管理器。
+
+    Returns
+    -------
+    bool
+        如果成功添加所有字体，则返回 `True`，否则返回 `False`。
+
+    Notes
+    -----
+    该函数将在指定文件夹 `FONT_DIRS` 中查找所有字体文件，并将其添加到 matplotlib 的字体管理器中。如果字体已经成功加载，
+    则返回 `True`，否则返回 `False`。
+
+    Raises
+    ------
+    RuntimeError
+        如果无法找到任何字体文件，则会引发运行时错误。
+    """
     if all_fonts_loaded():
         return True
     font_files = fm.findSystemFonts(fontpaths=FONT_DIRS)
@@ -65,20 +181,18 @@ def add_fonts():
 
 def replace_text(obj: Artist, replacements: Dict[str, str]) -> Artist:
     """
-    Replaces any `Text` objects in the given `Artist` object that match a key in the given dictionary of replacements
-    with the corresponding value.
+    在给定的 `Artist` 对象中查找任何匹配给定字典中键的 `Text` 对象，并将其替换为相应的值。
 
     Parameters
     ----------
-    ax : matplotlib.Artist.Artist
-        The `Artist` object to search for `Text` objects.
+    obj : matplotlib.artist.Artist
+        要搜索 `Text` 对象的 `Artist` 对象。
     replacements : dict
-        A dictionary of string replacements, where each key is the string to search for and each value is the replacement
-        string.
+        一个字符串替换的字典，其中每个键都是要查找的字符串，每个值都是替换字符串。
 
     Returns
     -------
-    None
+    matplotlib.artist.Artist
 
     Examples
     --------
@@ -90,8 +204,7 @@ def replace_text(obj: Artist, replacements: Dict[str, str]) -> Artist:
 
     Notes
     -----
-    This function only replaces exact matches of the text content in the dictionary keys, and does not perform partial
-    or case-insensitive matching.
+    该函数仅替换与字典键的文本内容完全匹配的文本，不进行部分匹配或大小写不敏感匹配。
     """
     for text_obj in obj.get_children():
         if isinstance(text_obj, plt.Text):
@@ -103,6 +216,26 @@ def replace_text(obj: Artist, replacements: Dict[str, str]) -> Artist:
 
 
 def _replace_text_objects(text_obj, mapping: Dict[str, str]):
+    """
+    将 `Artist` 对象中的 `Text` 对象的文本内容进行替换。
+
+    Parameters
+    ----------
+    text_obj : matplotlib.text.Text
+        要替换文本的 `Text` 对象。
+    mapping : Dict[str, str]
+        一个字符串替换的字典，其中每个键都是要查找的字符串，每个值都是替换字符串。
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> fig, ax = plt.subplots()
+    >>> text_obj = ax.text(0.5, 0.5, 'Hello, world!', fontsize=12)
+    """
     old_text = text_obj.get_text()
     new_text = mapping.get(old_text, old_text)
     if new_text != old_text:
@@ -110,19 +243,63 @@ def _replace_text_objects(text_obj, mapping: Dict[str, str]):
             text_obj.set_text(new_text)
 
 
-def update_figure_font(figure):
+def update_figure_font(figure: plt.Figure):
+    """
+    更新图形中文本元素的字体属性。
+
+    Parameters
+    ----------
+    figure : matplotlib.figure.Figure
+        要更新的 matplotlib 图形对象。
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+        更新后的 matplotlib 图形对象。
+
+    Examples
+    --------
+    >>> fig, ax = plt.subplots()
+    >>> ax.set_title('标题')
+    >>> update_figure_font(fig)
+
+    Notes
+    -----
+    此函数遍历图形中的文本元素，并根据 get_config() 函数返回的配置更新它们的字体属性。默认情况下，文本将设置为中文宋体，英文 Times New Roman。
+    """
     # Update the font properties of the text elements in the figure
     config = get_config()
     with plt.rc_context(config):
         for text_obj in figure.findobj(lambda x: isinstance(x, plt.Text)):
             text_obj.set_fontfamily(plt.rcParams.get("font", config["font.serif"]))
-    # Draw the figure with the updated font properties
-    figure.canvas.draw_idle()
+        # Draw the figure with the updated font properties
+        figure.canvas.draw_idle()
     return figure
 
 
 def update_elements(ax: Artist, refresh_all: bool = True, **elements: dict):
-    """Updates the text elements of the given Artist object with the given new values."""
+    """
+    使用给定的新值更新给定 `Artist` 对象的文本元素。
+
+    Args:
+        ax (matplotlib.artist.Artist): 要更新的 `Artist` 对象。
+        refresh_all (bool, optional): 是否刷新整个画布。默认值为 `True`。
+        **elements (dict): 每个元素名称（如 'xlabel'，'ylabel' 或 'title'）都是一个字符串，对应着要更改的属性的名称，
+            相应的值则是要设置的新文本。
+
+    Returns:
+        matplotlib.artist.Artist
+
+    Examples:
+        >>> fig, ax = plt.subplots()
+        >>> ax.set_xlabel('X轴')
+        >>> update_elements(ax, xlabel='时间', ylabel='价格', title='标题')
+
+    Notes:
+        该函数使用给定的新值更新给定 `Artist` 对象中的文本元素，并可选择刷新整个画布。`**elements` 参数是一个关键字参数，
+        其中每个键名是一个文本元素（如 'xlabel'，'ylabel' 或 'title'），每个键值是要设置的新文本。
+    """
+
     config = get_config()
     for element in elements:
         try:
@@ -137,10 +314,64 @@ def update_elements(ax: Artist, refresh_all: bool = True, **elements: dict):
     return ax
 
 
+def update_font(
+    ax: Artist,
+    mapping_strings: Dict[str, str] = None,
+    refresh: bool = False,
+    **elements: Dict[str, str],
+) -> Artist:
+    """将给定艺术家对象的文本元素使用给定的新值更新。
+
+    参数：
+        ax: Artist
+            要更新的艺术家对象。
+        mapping_strings: Dict[str, str]，可选
+            一个字符串映射字典，其中每个键都是要搜索的字符串，每个值都是要替换的字符串。
+        refresh: bool，可选
+            是否刷新整个画布。
+        **elements: Dict[str, str]
+            每个元素名称（如 'xlabel'，'ylabel' 或 'title'）都是一个字符串，对应着要更改的属性的名称，
+            相应的值则是要设置的新文本。
+
+    返回：
+        Artist
+            更新后的艺术家对象。
+
+    用法：
+        update_font(ax, mapping_strings={'Hello, world!': 'Goodbye, world!'}, xlabel='X轴', ylabel='Y轴', title='标题')
+
+    """
+    if mapping_strings is not None:
+        replace_text(ax, mapping_strings)
+    update_elements(ax, refresh_all=refresh, **elements)
+    return ax
+
+
 def mksci_font(
     mapping_strings: Optional[Dict[str, str]] = None, **elements: Dict[str, str]
 ) -> Callable:
-    """替换坐标轴标签文本的装饰器"""
+    """
+    将中文字体应用到装饰器中。
+
+    Args:
+        mapping_strings (Dict[str, str], optional): 字符串替换字典。默认为 None。
+        **elements (Dict[str, str]): 字体配置选项。
+
+    Returns:
+        Callable: 装饰器函数。
+
+    Decorator Example:
+        >>> @mksci_font(xlabel='时间', ylabel='价格')
+        >>> def my_plot():
+        >>>     fig, ax = plt.subplots()
+        >>>     ax.plot([1, 2, 3], [2, 3, 1])
+        >>>     ax.set_title('标题')
+        >>>     return ax
+
+    Notes:
+        该函数是一个装饰器函数，用于将一个生成 matplotlib.axes 的函数包装成中文，同时覆盖中文的标签标题等。
+    """
+
     if mapping_strings is None:
         mapping_strings = {}
 
@@ -149,8 +380,7 @@ def mksci_font(
             config = get_config()
             with plt.rc_context(config):
                 ax = func(*args, **kwargs)
-                update_elements(ax, **elements)
-                replace_text(ax, mapping_strings)
+                ax = update_font(ax, mapping_strings, **elements)
             return ax
 
         return wrapper
@@ -159,4 +389,27 @@ def mksci_font(
 
 
 def config_font(*args, **kwargs):
+    """
+    将字体配置应用于 `plt.rcParams` 中，以更改全局字体属性。
+
+    Parameters
+    ----------
+    *args
+        传递给 `get_config` 的位置参数
+    **kwargs
+        传递给 `get_config` 的关键字参数
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> config_font()  # 设置默认字体
+    >>> config_font("SimSun", fontsize=12)  # 设置字体为宋体, 字号为12
+
+    Notes
+    -----
+    此函数的实现依赖于 `get_config` 函数，将 `get_config` 的结果应用于 `plt.rcParams`。
+    """
     plt.rcParams.update(get_config("SunTimes", *args, **kwargs))
