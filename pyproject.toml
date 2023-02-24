@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mksci-font"
-version = "0.1.2"
+version = "0.1.3"
 description = "方便地将 Matplotlib 支持中文字体允许您配置图形为“中文宋体、英文 Times New Roman”"
 authors = ["Shuang Song <songshgeo@gmail.com>"]
 readme = "README.md"
