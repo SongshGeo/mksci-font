@@ -17,89 +17,65 @@ FONTS = ("SunTimes",)
 
 
 def is_font_loaded(font_name: str) -> bool:
-    """
-    检查指定字体是否已加载
+    """检查指定字体是否已加载。
 
-    Parameters
-    ----------
-    font_name : str
-        字体名称
+    Args:
+        font_name: 要检查的字体名称。
 
-    Returns
-    -------
-    bool
-        True if the font is loaded, otherwise False.
+    Returns:
+        bool: 如果字体已加载返回 True，否则返回 False。
 
-    Examples
-    --------
-    >>> is_font_loaded('SimSun')
-    True
-
-    >>> is_font_loaded('一个不知名的字体')
-    False
-
+    Examples:
+        >>> is_font_loaded('SimSun')
+        True
+        >>> is_font_loaded('一个不知名的字体')
+        False
     """
     font_names = [font.name for font in fm.fontManager.ttflist]
     return font_name in font_names
 
 
 def all_fonts_loaded() -> bool:
-    """
-    Returns a Boolean value indicating whether all fonts defined in FONTS are loaded in the current session.
+    """检查是否所有 FONTS 中定义的字体都已加载完成。
 
-    Returns
-    -------
-    bool
-        `True` if all fonts defined in FONTS are loaded in the current session, `False` otherwise.
+    Returns:
+        bool: 如果所有字体都已加载返回 True，否则返回 False。
 
-    Examples
-    --------
-    >>> all_fonts_loaded()
-    True
+    Examples:
+        >>> all_fonts_loaded()
+        True
 
-    Notes
-    -----
-    This function checks whether all fonts defined in FONTS are loaded in the current session (necessary to use 中文宋体，英文 Times New Roman). If any fonts are missing,
-    this function will return `False`. Otherwise, it will return `True`.
+    Note:
+        此函数检查当前会话中是否已加载所有 FONTS 中定义的字体
+        （使用中文宋体和英文 Times New Roman 所必需）。
     """
     return all(is_font_loaded(font) for font in FONTS)
 
 
-def show(figure=None, *args, **kwargs):
-    """
-    显示 matplotlib 图形。
+def show(figure: Optional[plt.Figure] = None, *args, **kwargs) -> None:
+    """显示 matplotlib 图形。
 
-    Parameters
-    ----------
-    figure : matplotlib.figure.Figure, optional
-        显示的图形对象。默认值为 `None`，创建新的图形。
-    *args : tuple, optional
-        其他位置参数，将在 `plt.show` 调用时传递。
-    **kwargs : dict, optional
-        其他关键字参数，将在 `plt.show` 调用时传递。
+    Args:
+        figure: 要显示的图形对象。如果为 None，则创建新的图形。
+        *args: 传递给 plt.show 的位置参数。
+        **kwargs: 传递给 plt.show 的关键字参数。
 
-    Returns
-    -------
-    result : None
-        该函数没有返回值。
+    Returns:
+        None
 
-    Examples
-    --------
-    显示一个新的图形：
+    Examples:
+        显示一个新的图形：
+        >>> show()
 
-    >>> show()
+        显示现有的图形：
+        >>> fig, ax = plt.subplots()
+        >>> show(fig)
 
-    显示现有的图形：
-
-    >>> fig, ax = plt.subplots()
-    >>> show(fig)
-
-    Notes
-    -----
-    如果指定了 `figure`，则该对象将被设置为当前的 matplotlib 图形对象。
+    Note:
+        如果指定了 figure，该对象将被设置为当前的 matplotlib 图形对象。
     """
     if figure is not None:
-        plt.figure(figure.number)  # set the given figure as the current figure
+        plt.figure(figure.number)
     with plt.rc_context(get_config()):
         results = plt.show(*args, **kwargs)
     return results
@@ -180,8 +156,7 @@ def add_fonts() -> bool:
 
 
 def replace_text(obj: Artist, replacements: Dict[str, str]) -> Artist:
-    """
-    在给定的 `Artist` 对象中查找任何匹配给定字典中键的 `Text` 对象，并将其替换为相应的值。
+    """在给定的 `Artist` 对象中查找任何匹配给定字典中键的 `Text` 对象，并将其替换为相应的值。
 
     Parameters
     ----------
@@ -260,12 +235,12 @@ def update_figure_font(figure: plt.Figure):
     Examples
     --------
     >>> fig, ax = plt.subplots()
-    >>> ax.set_title('标题')
+    >>> ax.set_title('题')
     >>> update_figure_font(fig)
 
     Notes
     -----
-    此函数遍历图形中的文本元素，并根据 get_config() 函数返回的配置更新它们的字体属性。默认情况下，文本将设置为中文宋体，英文 Times New Roman。
+    此函数遍历图形中的文本元素，并根据 get_config() 函数返回的配置更新它们的字体属性。默认情况文本将设置为中文宋体，英文 Times New Roman。
     """
     # Update the font properties of the text elements in the figure
     config = get_config()
@@ -277,41 +252,35 @@ def update_figure_font(figure: plt.Figure):
     return figure
 
 
-def update_elements(ax: Artist, refresh_all: bool = True, **elements: dict):
-    """
-    使用给定的新值更新给定 `Artist` 对象的文本元素。
+def update_elements(artist: Artist, refresh_all: bool = True, **elements: dict):
+    """使用给定的新值更新给定 Artist 对象的文本元素。
 
     Args:
-        ax (matplotlib.artist.Artist): 要更新的 `Artist` 对象。
-        refresh_all (bool, optional): 是否刷新整个画布。默认值为 `True`。
-        **elements (dict): 每个元素名称（如 'xlabel'，'ylabel' 或 'title'）都是一个字符串，对应着要更改的属性的名称，
-            相应的值则是要设置的新文本。
+        artist: 要更新的 Artist 对象。
+        refresh_all: 是否刷新整个画布。默认值为 True。
+        **elements: 每个元素名称（如 'xlabel'，'ylabel' 或 'title'）都是一个字符串，
+            对应着要更改的属性的名称，相应的值则是要设置的新文本。
 
     Returns:
-        matplotlib.artist.Artist
+        matplotlib.artist.Artist: 更新后的 Artist 对象。
 
     Examples:
         >>> fig, ax = plt.subplots()
         >>> ax.set_xlabel('X轴')
         >>> update_elements(ax, xlabel='时间', ylabel='价格', title='标题')
-
-    Notes:
-        该函数使用给定的新值更新给定 `Artist` 对象中的文本元素，并可选择刷新整个画布。`**elements` 参数是一个关键字参数，
-        其中每个键名是一个文本元素（如 'xlabel'，'ylabel' 或 'title'），每个键值是要设置的新文本。
     """
-
     config = get_config()
-    for element in elements:
+    for element, value in elements.items():
         try:
-            setting_func = getattr(ax, f"set_{element}")
+            setting_func = getattr(artist, f"set_{element}")
             with plt.rc_context(config):
-                text_obj = setting_func(elements[element])
+                text_obj = setting_func(value)
                 text_obj.set_fontfamily(plt.rcParams.get("font", config["font.serif"]))
         except AttributeError as e:
             raise AttributeError(f"No such attribute: {element}") from e
     if refresh_all:
-        update_figure_font(ax.figure)
-    return ax
+        update_figure_font(artist.figure)
+    return artist
 
 
 def update_font(
@@ -320,11 +289,11 @@ def update_font(
     refresh: bool = False,
     **elements: Dict[str, str],
 ) -> Artist:
-    """将给定艺术家对象的文本元素使用给定的新值更新。
+    """将给定Artist对象的文本元素使用给定的新值更新。
 
     参数：
         ax: Artist
-            要更新的艺术家对象。
+            要更新的Artist对象。
         mapping_strings: Dict[str, str]，可选
             一个字符串映射字典，其中每个键都是要搜索的字符串，每个值都是要替换的字符串。
         refresh: bool，可选
@@ -335,7 +304,7 @@ def update_font(
 
     返回：
         Artist
-            更新后的艺术家对象。
+            更新后的Artist对象。
 
     用法：
         update_font(ax, mapping_strings={'Hello, world!': 'Goodbye, world!'}, xlabel='X轴', ylabel='Y轴', title='标题')
