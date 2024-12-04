@@ -9,7 +9,7 @@ include = ["SunTimes.ttf"]
 
 [tool.poetry.dependencies]
 python = ">=3.8.1"
-matplotlib = "^3.7.0"
+matplotlib = "*"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -21,6 +21,7 @@ isort = "^5.12.0"
 nbstripout = "^0.6.1"
 pydocstyle = "^6.3.0"
 pre-commit-hooks = "^4.4.0"
+ruff = "^0.8.1"
 
 [build-system]
 requires = ["poetry-core"]
