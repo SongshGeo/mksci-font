@@ -19,30 +19,27 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         id: release
         with:
-          release-type: python  # 改为 python
-          package-name: mksci-font  # 改为你的包名
+          release-type: python
+          package-name: mksci-font
 
   publish-pypi:
     needs: release-please
     runs-on: ubuntu-latest
     if: ${{ needs.release-please.outputs.release_created }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
-      - name: Install poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-
-      - name: Configure poetry
-        run: |
-          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.9.4"
 
       - name: Build and publish
         run: |
-          poetry build
-          poetry publish
+          uv build
+          uv publish --token "${{ secrets.PYPI_TOKEN }}"
