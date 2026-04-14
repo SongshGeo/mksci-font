@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/SongshGeo/mksci-font/compare/v0.1.4...v0.1.5) (2026-04-14)
+
+
+### Bug Fixes
+
+* :bug: update dependencies and configuration for security ([d1046cc](https://github.com/SongshGeo/mksci-font/commit/d1046cc202350b8df679ad8b7b534f6d1bee8f72))
+
 ## 0.1.4 (2024-12-04)
 
 
