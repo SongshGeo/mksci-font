@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/SongshGeo/mksci-font/compare/v0.1.5...v1.0.0) (2026-04-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* finalize API for 1.0.0.
+
+### Features
+
+* trigger 1.0.0 release ([bbf67ee](https://github.com/SongshGeo/mksci-font/commit/bbf67ee745e03371b040fd2f0a46d74a10aae65f))
+
 ## [0.1.5](https://github.com/SongshGeo/mksci-font/compare/v0.1.4...v0.1.5) (2026-04-14)
 
 
