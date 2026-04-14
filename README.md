@@ -39,11 +39,9 @@ uv export --no-hashes --no-emit-project -o requirements.txt
 
 要为 Matplotlib 配置默认字体设置，可以使用 `config_font()` 函数。
 
-python
-
 ```python
-# 同时还可以修改字号，以及其它任何 rcParams 支持的属性
-config_font({"font.size": 12})
+# 推荐写法：显式传 rc_params
+config_font(rc_params={"font.size": 12})
 
 _, ax = plt.subplots(figsize=(4, 1))
 ax.text(0.5, 0.5, msg, ha='center', va='center')
@@ -103,6 +101,12 @@ update_font(ax, mapping_string, ylabel="覆盖原Y轴标签")
 
 项目显式约束了安全版本的 `Pillow`，而不是仅依赖 `matplotlib` 的传递依赖解析结果。
 这样可以在保持与 `matplotlib` 兼容的同时，避免解析到存在已知安全问题的旧版本。
+
+字体资源策略：
+
+- 默认优先使用系统中已安装的 `SunTimes` 字体。
+- 如果你希望随包分发字体文件，可将 `.ttf/.ttc/.otf` 放到 `mksci_font/data/`，运行时会自动尝试注册。
+- 当系统字体不可用且包内也没有字体文件时，库会抛出明确错误，提示安装字体或补充文件。
 
 依赖解析以 `uv.lock` 为准；`requirements.txt` 由 `uv export` 生成，提交前请与锁文件保持一致。
 
