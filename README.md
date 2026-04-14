@@ -12,6 +12,26 @@ mksci-font
 pip install mksci-font
 ```
 
+当前版本要求 `Python >= 3.10`。
+
+之所以提高最低 Python 版本，是为了跟进 `Pillow` 的安全修复版本，并避免旧版本传递依赖持续触发安全告警。
+
+### 从源码开发（uv）
+
+本仓库使用 [uv](https://docs.astral.sh/uv/) 管理依赖与锁文件。克隆后可在项目根目录执行：
+
+```bash
+uv sync --extra dev
+uv run pytest tests/test_smoke.py
+```
+
+修改 `pyproject.toml` 中的依赖后，请同步锁文件并更新导出的 `requirements.txt`（供仅使用 pip 的环境或工具扫描）：
+
+```bash
+uv lock
+uv export --no-hashes --no-emit-project -o requirements.txt
+```
+
 使用方法
 ----
 
@@ -78,6 +98,13 @@ update_font(ax, mapping_string, ylabel="覆盖原Y轴标签")
 ```
 
 更多用法例子可以见[这个笔记本](tests/test_plot_jupyter.ipynb)
+
+## 维护说明
+
+项目显式约束了安全版本的 `Pillow`，而不是仅依赖 `matplotlib` 的传递依赖解析结果。
+这样可以在保持与 `matplotlib` 兼容的同时，避免解析到存在已知安全问题的旧版本。
+
+依赖解析以 `uv.lock` 为准；`requirements.txt` 由 `uv export` 生成，提交前请与锁文件保持一致。
 
 许可证
 ---

@@ -5,14 +5,14 @@
 # GitHub   : https://github.com/SongshGeo
 # Website: https://cv.songshgeo.com/
 
+from pathlib import Path
 from typing import Callable, Dict, Optional
 
-import pkg_resources
 from matplotlib import font_manager as fm
 from matplotlib import pyplot as plt
 from matplotlib.artist import Artist
 
-FONT_DIRS = pkg_resources.resource_filename("mksci_font", "data")
+FONT_DIRS = str(Path(__file__).resolve().parent / "data")
 FONTS = ("SunTimes",)
 
 

@@ -11,26 +11,15 @@ setup:
 # pydocstyle: https://github.com/PyCQA/pydocstyle
 # pre-commit-hooks: https://github.com/pre-commit/pre-commit-hooks
 setup-pre-commit:
-	poetry add --group dev flake8 isort nbstripout pydocstyle pre-commit-hooks
-	poetry run pre-commit install
+	uv add --optional dev flake8 isort nbstripout pydocstyle pre-commit-hooks
+	uv run pre-commit install
 
 install-jupyter:
-	poetry add ipykernel --group dev
+	uv add --optional dev ipykernel
 
 install-tests:
-	poetry add pytest allure-pytest --group dev
+	uv add --optional dev pytest allure-pytest
 
 # https://timvink.github.io/mkdocs-git-authors-plugin/index.html
 install-docs:
-	poetry add --group docs mkdocs mkdocs-material
-	poetry add --group docs mkdocs-git-revision-date-localized-plugin
-	poetry add --group docs mkdocs-minify-plugin
-	poetry add --group docs mkdocs-redirects
-	poetry add --group docs mkdocs-awesome-pages-plugin
-	poetry add --group docs mkdocs-git-authors-plugin
-	poetry add --group docs mkdocstrings\[python\]
-	poetry add --group docs mkdocs-bibtex
-	poetry add --group docs mkdocs-macros-plugin
-	# poetry add --group docs mkdocs-jupyter
-	poetry add --group docs mkdocs-callouts
-	poetry add --group docs mkdocs-glightbox
+	uv add --optional docs mkdocs mkdocs-material mkdocs-git-revision-date-localized-plugin mkdocs-minify-plugin mkdocs-redirects mkdocs-awesome-pages-plugin mkdocs-git-authors-plugin "mkdocstrings[python]" mkdocs-bibtex mkdocs-macros-plugin mkdocs-callouts mkdocs-glightbox
