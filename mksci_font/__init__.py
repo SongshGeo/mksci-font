@@ -5,6 +5,11 @@
 # GitHub   : https://github.com/SongshGeo
 # Website: https://cv.songshgeo.com/
 
-from .font_wrapper import config_font, mksci_font, show, update_font
+"""Public API for mksci-font."""
+
+from .config import config_font
+from .decorators import mksci_font
+from .display import show
+from .text_ops import update_font
 
 __all__ = ["mksci_font", "show", "config_font", "update_font"]
