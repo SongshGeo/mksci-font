@@ -31,4 +31,4 @@ jobs:
         run: uv sync --frozen --extra dev
 
       - name: Run tests
-        run: uv run pytest tests/test_smoke.py
+        run: uv run pytest
